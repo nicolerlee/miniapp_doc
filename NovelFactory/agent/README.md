@@ -29,3 +29,4 @@
 | [18-AI接口](18-AI接口.md) | AI对话/AI应用管理 | `/api/ai` `/api/fun-ai/app` |
 | [19-异步任务机制说明](19-异步任务机制说明.md) | 创建/构建/发布的异步原理、WebSocket通知、队列机制 | - |
 | [20-Agent接口](20-Agent接口.md) | Agent应用管理/构建发布/任务查询/聚合查询/API Key管理 | `/api/agent` `/api/novel-apps` `/api/novel-auth/api-keys` |
+| [25-Agent聚合更新改造方案](25-Agent聚合更新改造方案.md) | Agent聚合update收敛、广告PATCH、广告删除接口设计 | `/api/agent/app/update` `/api/agent/app/ad-config` |
