@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>统计看板 - 小程序工厂</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    :root {
+      --bg: #f3f4f6;
+      --surface: #ffffff;
+      --ink: #111827;
+      --ink-soft: #374151;
+      --muted: #6b7280;
+      --faint: #9ca3af;
+      --border: #e5e7eb;
+      --border-light: #f3f4f6;
+      --accent: #ea580c;
+      --green: #059669;
+      --amber: #d97706;
+      --red: #dc2626;
+      --slate: #1e293b;
+      --radius-xl: 20px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Noto Sans SC", sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== 顶部导航 ===== */
+    .topbar {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      gap: 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar .logo { font-weight: 800; font-size: 16px; color: var(--ink); letter-spacing: -0.01em; }
+    .topbar .nav { margin-left: auto; display: flex; gap: 2px; }
+    .topbar .nav a {
+      padding: 6px 14px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+      text-decoration: none;
+      transition: all 0.12s ease;
+    }
+    .topbar .nav a:hover { color: var(--ink-soft); background: var(--bg); }
+    .topbar .nav a.on { color: var(--ink); background: var(--bg); font-weight: 700; }
+
+    /* ===== 主内容 ===== */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px 48px;
+    }
+
+    /* ===== 状态条 ===== */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .status-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+    .status-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-item .dot.green { background: var(--green); box-shadow: 0 0 0 3px rgba(5,150,105,0.12); }
+    .status-item .dot.amber { background: var(--amber); box-shadow: 0 0 0 3px rgba(217,119,6,0.12); }
+    .status-item .dot.red { background: var(--red); box-shadow: 0 0 0 3px rgba(220,38,38,0.12); }
+    .status-item strong { color: var(--ink); font-weight: 800; margin-left: 2px; }
+    .status-divider { width: 1px; height: 20px; background: var(--border); }
+
+    /* ===== Bento Grid 概览 ===== */
+    .bento {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: auto auto;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    /* 左上：总项目 */
+    .card-hero {
+      grid-row: 1 / 2; grid-column: 1 / 2;
+      background: var(--slate);
+      border: none;
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 220px;
+    }
+    .card-hero .label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.04em; }
+    .card-hero .number { font-size: 56px; font-weight: 900; color: #fff; letter-spacing: -0.04em; line-height: 1; margin: 6px 0 10px; }
+    .card-hero .trend { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: #4ade80; }
+    .card-hero .meta { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.45); line-height: 1.7; }
+
+    /* 右上：分类排名 */
+    .card-rank {
+      grid-row: 1 / 2; grid-column: 2 / 3;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-rank .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .card-rank .card-head h3 { font-size: 14px; font-weight: 800; color: var(--ink); }
+    .card-rank .card-head span { font-size: 12px; font-weight: 600; color: var(--faint); }
+    .rank-list { display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: space-between; }
+    .rank-item { display: grid; grid-template-columns: 48px 1fr 36px; align-items: center; gap: 10px; padding: 3px 0; border-radius: 6px; transition: background 0.12s ease; }
+    .rank-item:hover { background: var(--bg); }
+    .rank-item .name { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+    .rank-item .bar-wrap { height: 8px; background: var(--border-light); border-radius: 99px; overflow: hidden; }
+    .rank-item .bar { height: 100%; border-radius: 99px; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); min-width: 2px; }
+    .rank-item .count { font-size: 12px; font-weight: 800; color: var(--ink); text-align: right; }
+
+    /* 左下：平台分布 */
+    .card-platform {
+      grid-row: 2 / 3; grid-column: 1 / 2;
+      padding: 18px 20px;
+    }
+    .card-platform .card-head { margin-bottom: 14px; }
+    .card-platform .card-head h3 { font-size: 13px; font-weight: 800; color: var(--ink); }
+    .card-platform .card-head p { font-size: 11px; font-weight: 500; color: var(--faint); margin-top: 2px; }
+    .plat-list { display: flex; flex-direction: column; gap: 8px; }
+    .plat-item { display: flex; align-items: center; gap: 8px; }
+    .plat-item .plat-icon {
+      width: 26px; height: 26px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .plat-item .plat-info { flex: 1; min-width: 0; }
+    .plat-item .plat-info .plat-name { font-size: 11px; font-weight: 700; color: var(--ink-soft); display: flex; justify-content: space-between; }
+    .plat-item .plat-info .plat-name span { color: var(--faint); font-weight: 600; }
+    .plat-item .plat-info .plat-bar-wrap { height: 5px; background: var(--border-light); border-radius: 99px; overflow: hidden; margin-top: 3px; }
+    .plat-item .plat-info .plat-bar { height: 100%; border-radius: 99px; background: var(--slate); transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+
+    /* 右下：趋势图 */
+    .card-trend {
+      grid-row: 2 / 3; grid-column: 2 / 3;
+      padding: 18px 20px 14px;
+    }
+    .card-trend .card-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+    .card-trend .card-head h3 { font-size: 13px; font-weight: 800; color: var(--ink); }
+    .card-trend .card-head p { font-size: 11px; font-weight: 500; color: var(--faint); margin-top: 2px; }
+    .trend-toggle-mini {
+      display: flex; gap: 2px; padding: 3px; background: var(--bg); border-radius: 8px;
+    }
+    .trend-toggle-mini button {
+      padding: 4px 10px; border: none; border-radius: 6px; background: transparent;
+      color: var(--faint); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.12s ease;
+    }
+    .trend-toggle-mini button:hover { color: var(--muted); }
+    .trend-toggle-mini button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .trend-chart-box-mini { width: 100%; height: 180px; }
+
+    /* ===== Section 标题 ===== */
+    .section { margin-bottom: 28px; }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .section-header h2 { font-size: 14px; font-weight: 800; color: var(--ink); }
+    .section-header .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .section-header .count { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--faint); background: var(--border-light); padding: 3px 10px; border-radius: 99px; }
+
+    /* ===== 分类详情卡片网格 ===== */
+    .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    /* ===== 分类详情卡片 ===== */
+    .cat-detail-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      position: relative;
+    }
+    .cat-detail-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .cat-detail-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: var(--cat-color, var(--slate));
+    }
+    .cat-detail-head {
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .cat-detail-head .cat-name { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .cat-detail-head .cat-count-row { display: flex; align-items: baseline; gap: 6px; }
+    .cat-detail-head .cat-count { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; color: var(--ink); line-height: 1; }
+    .cat-detail-head .cat-unit { font-size: 11px; font-weight: 600; color: var(--faint); }
+    .cat-detail-head .cat-pct { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--muted); background: var(--border-light); padding: 2px 7px; border-radius: 5px; }
+    .cat-detail-body {
+      padding: 10px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .detail-plat-row {
+      display: grid;
+      grid-template-columns: 22px 1fr 36px;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      border-radius: 5px;
+      transition: background 0.12s ease;
+    }
+    .detail-plat-row:hover { background: var(--bg); }
+    .detail-plat-row .plat-icon {
+      width: 22px; height: 22px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .detail-plat-row .plat-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .detail-plat-row .plat-name-line { font-size: 11px; font-weight: 700; color: var(--ink-soft); display: flex; justify-content: space-between; align-items: center; }
+    .detail-plat-row .plat-name-line .plat-count { font-size: 11px; font-weight: 800; color: var(--ink); }
+    .detail-plat-row .plat-bar-wrap { height: 4px; background: var(--border-light); border-radius: 99px; overflow: hidden; }
+    .detail-plat-row .plat-bar { height: 100%; border-radius: 99px; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); min-width: 2px; }
+    .detail-plat-row .plat-pct { font-size: 10px; font-weight: 700; color: var(--faint); text-align: right; }
+
+    /* ===== 刷新按钮 ===== */
+    .refresh-btn {
+      position: fixed; bottom: 24px; right: 24px;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--surface); color: var(--ink-soft);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s ease; box-shadow: var(--shadow-md); z-index: 100;
+    }
+    .refresh-btn:hover { background: var(--bg); }
+    .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .refresh-btn .spin { animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 120px;
+      padding: 10px 16px; border-radius: 10px;
+      background: var(--slate); color: #fff;
+      font-size: 13px; font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      opacity: 0; transform: translateY(8px);
+      transition: all 0.3s ease; pointer-events: none; z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ===== 动画 ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .status-bar, .bento, .section {
+      animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .status-bar { animation-delay: 0s; }
+    .bento { animation-delay: 0.04s; }
+    .section { animation-delay: 0.08s; }
+    .cat-detail-card {
+      opacity: 0;
+      animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 1024px) {
+      .bento { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .card-hero { grid-column: 1 / 2; grid-row: auto; min-height: 180px; }
+      .card-rank { grid-column: 1 / 2; grid-row: auto; }
+      .card-platform { grid-column: 1 / 2; grid-row: auto; }
+      .card-trend { grid-column: 1 / 2; grid-row: auto; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .main { padding: 20px 24px 40px; }
+    }
+    @media (max-width: 640px) {
+      .cat-grid { grid-template-columns: 1fr; }
+      .status-bar { flex-wrap: wrap; gap: 8px 14px; }
+      .status-divider { display: none; }
+      .main { padding: 16px 20px 40px; }
+      .card-hero .number { font-size: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo">小程序工厂</div>
+    <nav class="nav">
+      <a href="#">首页</a>
+      <a href="#">项目列表</a>
+      <a href="#" class="on">统计看板</a>
+    </nav>
+  </div>
+
+  <div class="main">
+    <!-- 状态条 -->
+    <div class="status-bar">
+      <div class="status-item"><span class="dot green"></span>系统运行正常</div>
+      <div class="status-divider"></div>
+      <div class="status-item">总项目 <strong>209</strong></div>
+      <div class="status-divider"></div>
+      <div class="status-item">今日更新 <strong style="color:var(--green)">+12</strong></div>
+      <div class="status-divider"></div>
+      <div class="status-item">待更新 <strong style="color:var(--amber)">5</strong></div>
+      <div class="status-divider"></div>
+      <div class="status-item">异常 <strong style="color:var(--red)">2</strong></div>
+    </div>
+
+    <!-- ===== 总体概览 Bento ===== -->
+    <div class="bento">
+      <!-- 左上：总项目 -->
+      <div class="card card-hero">
+        <div>
+          <div class="label">总项目数</div>
+          <div class="number" id="hero-number">0</div>
+          <div class="trend">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            较昨日 +3
+          </div>
+        </div>
+        <div class="meta">
+          覆盖 8 个分类 · 6 个平台<br>
+          最近更新 2 分钟前
+        </div>
+      </div>
+
+      <!-- 右上：分类排名 -->
+      <div class="card card-rank">
+        <div class="card-head">
+          <h3>分类分布</h3>
+          <span>按项目数量排序</span>
+        </div>
+        <div class="rank-list" id="rank-list"></div>
+      </div>
+
+      <!-- 左下：平台分布 -->
+      <div class="card card-platform">
+        <div class="card-head">
+          <h3>平台分布</h3>
+          <p>各平台的累计项目数</p>
+        </div>
+        <div class="plat-list" id="plat-list"></div>
+      </div>
+
+      <!-- 右下：趋势图 -->
+      <div class="card card-trend">
+        <div class="card-head">
+          <div>
+            <h3>新增趋势</h3>
+            <p>最近 30 天</p>
+          </div>
+          <div class="trend-toggle-mini" id="trend-toggle-mini">
+            <button class="on" data-mode="total">总量</button>
+            <button data-mode="category">分类</button>
+          </div>
+        </div>
+        <div id="trend-chart-mini" class="trend-chart-box-mini"></div>
+      </div>
+    </div>
+
+    <!-- ===== 分类详情 ===== -->
+    <div class="section">
+      <div class="section-header">
+        <span class="dot" style="background:#E85D4C;"></span>
+        <h2>小程序类</h2>
+        <span class="count">4 个分类 · 171 个项目</span>
+      </div>
+      <div class="cat-grid" id="miniapp-grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="dot" style="background:#F59E0B;"></span>
+        <h2>H5 页面类</h2>
+        <span class="count">4 个分类 · 38 个项目</span>
+      </div>
+      <div class="cat-grid" id="h5-grid"></div>
+    </div>
+  </div>
+
+  <!-- 刷新按钮 -->
+  <button class="refresh-btn" id="refresh-btn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    刷新
+  </button>
+  <div class="toast" id="toast">数据已更新</div>
+
+  <script>
+    // ========== 数据 ==========
+    const catData = [
+      { name: '影视', key: '影视', count: 58, pct: 27.8, color: '#E85D4C', bar: 'bar-yingshi', group: 'miniapp', platforms: { '抖音': 36, '百度': 24, '微信': 15, '快手': 10 } },
+      { name: '小说', key: '小说', count: 56, pct: 26.8, color: '#10B981', bar: 'bar-novel', group: 'miniapp', platforms: { '抖音': 65, '微信': 28, '快手': 12, '百度': 5, '支付宝': 2 } },
+      { name: '短剧', key: '短剧', count: 38, pct: 18.2, color: '#3B82F6', bar: 'bar-playlet', group: 'miniapp', platforms: { '抖音': 19, '微信': 19, '快手': 9, '支付宝': 3 } },
+      { name: '漫剧', key: '漫剧', count: 19, pct: 9.1, color: '#8B5CF6', bar: 'bar-manju', group: 'miniapp', platforms: { '抖音': 38, '微信': 12, '快手': 6 } },
+      { name: 'H5小说', key: 'H5小说', count: 32, pct: 15.3, color: '#F59E0B', bar: 'bar-h5novel', group: 'h5', platforms: { '抖音': 32, '微信': 13, '快手': 8, '百度': 2 } },
+      { name: 'H5影视', key: 'H5影视', count: 4, pct: 1.9, color: '#F97316', bar: 'bar-h5yingshi', group: 'h5', platforms: { '抖音': 4 } },
+      { name: 'H5分销', key: 'H5分销', count: 1, pct: 0.5, color: '#D97706', bar: 'bar-h5fenxiao', group: 'h5', platforms: { '通用': 1 } },
+      { name: 'H5拉新', key: 'H5拉新', count: 1, pct: 0.5, color: '#92400E', bar: 'bar-h5laxin', group: 'h5', platforms: { '通用': 1 } },
+    ];
+
+    const platformMeta = {
+      '通用': { color: '#9CA3AF', abbr: '通' },
+      '百度': { color: '#3B82F6', abbr: '百' },
+      '抖音': { color: '#1F2937', abbr: '抖' },
+      '快手': { color: '#F97316', abbr: '快' },
+      '微信': { color: '#22C55E', abbr: '微' },
+      '支付宝': { color: '#1677FF', abbr: '支' },
+    };
+
+    const platSummary = [
+      { name: '抖音', count: 198, color: '#1F2937', abbr: '抖' },
+      { name: '微信', count: 86, color: '#22C55E', abbr: '微' },
+      { name: '快手', count: 45, color: '#F97316', abbr: '快' },
+      { name: '百度', count: 31, color: '#3B82F6', abbr: '百' },
+      { name: '支付宝', count: 5, color: '#1677FF', abbr: '支' },
+      { name: '通用', count: 2, color: '#9CA3AF', abbr: '通' },
+    ];
+
+    // ========== 数字动画 ==========
+    function animateNumber(el, target, duration = 800) {
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(ease * target);
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    animateNumber(document.getElementById('hero-number'), 209);
+
+    // ========== 分类排名 ==========
+    const rankList = document.getElementById('rank-list');
+    const maxCount = Math.max(...catData.map(c => c.count));
+    catData.forEach(cat => {
+      const item = document.createElement('div');
+      item.className = 'rank-item';
+      item.innerHTML = `
+        <div class="name">${cat.name}</div>
+        <div class="bar-wrap"><div class="bar" style="width:0%; background:${cat.color};"></div></div>
+        <div class="count">${cat.count}</div>
+      `;
+      rankList.appendChild(item);
+      setTimeout(() => { item.querySelector('.bar').style.width = `${(cat.count / maxCount) * 100}%`; }, 200 + catData.indexOf(cat) * 50);
+    });
+
+    // ========== 平台分布 ==========
+    const platList = document.getElementById('plat-list');
+    const platMax = Math.max(...platSummary.map(p => p.count));
+    platSummary.forEach(plat => {
+      const item = document.createElement('div');
+      item.className = 'plat-item';
+      item.innerHTML = `
+        <div class="plat-icon" style="background:${plat.color}">${plat.abbr}</div>
+        <div class="plat-info">
+          <div class="plat-name">${plat.name} <span>${plat.count} 个</span></div>
+          <div class="plat-bar-wrap"><div class="plat-bar" style="width:0%"></div></div>
+        </div>
+      `;
+      platList.appendChild(item);
+      setTimeout(() => { item.querySelector('.plat-bar').style.width = `${(plat.count / platMax) * 100}%`; }, 400 + platSummary.indexOf(plat) * 70);
+    });
+
+    // ========== 分类详情卡片 ==========
+    function renderCatDetailCard(cat, index) {
+      const platEntries = Object.entries(cat.platforms).sort((a, b) => b[1] - a[1]);
+      const maxPlat = platEntries[0]?.[1] || 1;
+      const platRows = platEntries.map(([platName, platCount]) => {
+        const meta = platformMeta[platName] || { color: '#9CA3AF', abbr: platName[0] };
+        const pct = Math.round((platCount / cat.count) * 100);
+        return `
+          <div class="detail-plat-row">
+            <div class="plat-icon" style="background:${meta.color}">${meta.abbr}</div>
+            <div class="plat-info">
+              <div class="plat-name-line">
+                <span>${platName}</span>
+                <span class="plat-count">${platCount}</span>
+              </div>
+              <div class="plat-bar-wrap">
+                <div class="plat-bar" style="width:0%; background:${meta.color}30;" data-width="${(platCount / maxPlat) * 100}%"></div>
+              </div>
+            </div>
+            <div class="plat-pct">${pct}%</div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="cat-detail-card" style="--cat-color:${cat.color}; animation-delay: ${index * 0.05}s;">
+          <div class="cat-detail-head">
+            <div class="cat-name">${cat.name}</div>
+            <div class="cat-count-row">
+              <span class="cat-count">${cat.count}</span>
+              <span class="cat-unit">个项目</span>
+              <span class="cat-pct">${cat.pct}%</span>
+            </div>
+          </div>
+          <div class="cat-detail-body">${platRows}</div>
+        </div>
+      `;
+    }
+
+    const miniappGrid = document.getElementById('miniapp-grid');
+    const h5Grid = document.getElementById('h5-grid');
+    catData.filter(c => c.group === 'miniapp').forEach((cat, i) => {
+      miniappGrid.insertAdjacentHTML('beforeend', renderCatDetailCard(cat, i));
+    });
+    catData.filter(c => c.group === 'h5').forEach((cat, i) => {
+      h5Grid.insertAdjacentHTML('beforeend', renderCatDetailCard(cat, i + 4));
+    });
+
+    setTimeout(() => {
+      document.querySelectorAll('.plat-bar[data-width]').forEach(bar => { bar.style.width = bar.dataset.width; });
+    }, 400);
+
+    // ========== 趋势图 (Mini) ==========
+    const trendChart = echarts.init(document.getElementById('trend-chart-mini'));
+    const days = [];
+    const baseDate = new Date();
+    baseDate.setDate(baseDate.getDate() - 30);
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(baseDate);
+      d.setDate(d.getDate() + i);
+      days.push(`${d.getMonth()+1}/${d.getDate()}`);
+    }
+
+    const trendCats = [
+      { name: '影视', color: '#E85D4C' }, { name: '小说', color: '#10B981' },
+      { name: '短剧', color: '#3B82F6' }, { name: '漫剧', color: '#8B5CF6' },
+      { name: 'H5小说', color: '#F59E0B' }, { name: 'H5影视', color: '#F97316' },
+      { name: 'H5分销', color: '#D97706' }, { name: 'H5拉新', color: '#92400E' }
+    ];
+    const catDataMap = {};
+    trendCats.forEach(cat => {
+      const data = days.map(() => Math.round(Math.random() * 3));
+      data[Math.floor(Math.random() * 30)] = Math.round(Math.random() * 15 + 5);
+      catDataMap[cat.name] = data;
+    });
+    const totalData = days.map((_, i) => trendCats.reduce((sum, cat) => sum + catDataMap[cat.name][i], 0));
+
+    function buildTrendOption(mode) {
+      let series = [];
+      if (mode === 'total') {
+        series = [{
+          name: '新增总量', type: 'line', smooth: 0.35, symbol: 'none',
+          lineStyle: { width: 2.5, color: '#ea580c' }, itemStyle: { color: '#ea580c' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(234,88,12,0.15)' }, { offset: 1, color: 'rgba(234,88,12,0)' }
+            ])
+          },
+          data: totalData
+        }];
+      } else {
+        series = trendCats.map(cat => ({
+          name: cat.name, type: 'line', smooth: 0.35, symbol: 'none',
+          lineStyle: { width: 2, color: cat.color }, itemStyle: { color: cat.color },
+          emphasis: { focus: 'series' }, data: catDataMap[cat.name]
+        }));
+      }
+      return {
+        color: mode === 'total' ? ['#ea580c'] : trendCats.map(c => c.color),
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: 'rgba(255,255,255,0.96)', borderColor: 'rgba(0,0,0,0.06)', borderWidth: 1,
+          textStyle: { color: '#1f2937', fontSize: 12, fontWeight: 600 },
+          padding: [10, 14],
+          extraCssText: 'box-shadow: 0 8px 24px rgba(0,0,0,0.08); border-radius: 10px;',
+          formatter: function(params) {
+            let html = `<div style="font-weight:900;margin-bottom:6px;font-size:13px;">${params[0].axisValue}</div>`;
+            params.forEach(p => {
+              html += `<div style="display:flex;align-items:center;gap:6px;margin:3px 0;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${p.color};"></span><span style="flex:1;font-size:11px;color:#6b7280;">${p.seriesName}</span><span style="font-weight:900;font-size:12px;">${p.value}</span></div>`;
+            });
+            return html;
+          }
+        },
+        legend: mode === 'total' ? { show: false } : { top: 0, right: 0, icon: 'circle', itemWidth: 6, itemHeight: 6, itemGap: 10, textStyle: { color: '#9ca3af', fontWeight: 600, fontSize: 10 } },
+        grid: { top: mode === 'total' ? 8 : 28, left: 8, right: 8, bottom: 4, containLabel: true },
+        xAxis: { type: 'category', boundaryGap: false, data: days, axisLabel: { color: '#d1d5db', fontWeight: 500, fontSize: 10, interval: 4 }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#f3f4f6' } } },
+        yAxis: { type: 'value', minInterval: 1, axisLabel: { color: '#d1d5db', fontWeight: 500, fontSize: 10 }, splitLine: { lineStyle: { color: '#f3f4f6' } } },
+        series
+      };
+    }
+
+    let trendMode = 'total';
+    trendChart.setOption(buildTrendOption('total'));
+    document.querySelectorAll('#trend-toggle-mini button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#trend-toggle-mini button').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        trendMode = btn.dataset.mode;
+        trendChart.setOption(buildTrendOption(trendMode), { notMerge: true });
+      });
+    });
+
+    // ========== 刷新按钮 ==========
+    const refreshBtn = document.getElementById('refresh-btn');
+    const toast = document.getElementById('toast');
+    refreshBtn.addEventListener('click', () => {
+      if (refreshBtn.disabled) return;
+      refreshBtn.disabled = true;
+      const icon = refreshBtn.querySelector('svg');
+      icon.classList.add('spin');
+      setTimeout(() => {
+        refreshBtn.disabled = false;
+        icon.classList.remove('spin');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      }, 1000);
+    });
+
+    window.addEventListener('resize', () => trendChart.resize());
+  </script>
+</body>
+</html>

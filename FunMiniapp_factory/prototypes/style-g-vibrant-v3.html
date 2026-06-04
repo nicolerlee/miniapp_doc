@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FunMini Factory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf6f1;
+      --surface: #ffffff;
+      --ink: #1a1a2e;
+      --muted: #8b8b9e;
+      --border: rgba(0,0,0,0.06);
+      --coral: #ff6b6b;
+      --coral-light: #fff0f0;
+      --violet: #a855f7;
+      --violet-light: #f3e8ff;
+      --emerald: #10b981;
+      --emerald-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --blue: #3b82f6;
+      --blue-light: #dbeafe;
+      --rose: #f43f5e;
+      --rose-light: #ffe4e6;
+    }
+    * { font-family: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+    /* 顶部毛玻璃 */
+    .topbar {
+      background: rgba(250,246,241,0.85);
+      backdrop-filter: blur(20px) saturate(1.2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* 标题装饰 */
+    .title-deco {
+      position: relative;
+      display: inline-block;
+    }
+    .title-deco::after {
+      content: '';
+      position: absolute;
+      bottom: 2px; left: 0; right: 0;
+      height: 8px;
+      background: linear-gradient(120deg, var(--coral), var(--amber));
+      border-radius: 4px;
+      opacity: 0.25;
+      z-index: -1;
+    }
+
+    /* 搜索框 */
+    .search-box {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    .search-box:focus {
+      border-color: var(--coral);
+      box-shadow: 0 0 0 4px rgba(255,107,107,0.1), 0 4px 20px -4px rgba(255,107,107,0.15);
+      outline: none;
+    }
+
+    /* 筛选 pills */
+    .pill {
+      padding: 7px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--surface);
+      color: var(--muted);
+    }
+    .pill:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px -2px rgba(0,0,0,0.08);
+      color: var(--ink);
+    }
+    .pill.on {
+      background: linear-gradient(135deg, var(--coral), var(--rose));
+      color: #fff;
+      box-shadow: 0 4px 16px -4px rgba(255,107,107,0.4);
+    }
+
+    /* 表格卡片 */
+    .row-card {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .row-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--coral), var(--amber));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .row-card:hover {
+      transform: translateY(-3px) scale(1.005);
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+      border-color: rgba(255,107,107,0.15);
+    }
+    .row-card:hover::before { opacity: 1; }
+
+    /* 平台徽章 */
+    .plat {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .plat-wechat { background: #dcfce7; color: #15803d; }
+    .plat-douyin { background: #1a1a2e; color: #fff; }
+    .plat-kuaishou { background: #fff7ed; color: #c2410c; }
+    .plat-h5 { background: #fef9c3; color: #a16207; }
+
+    /* 类型标签 */
+    .tag { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 8px; }
+    .tag-novel { background: var(--emerald-light); color: #047857; }
+    .tag-comic { background: var(--violet-light); color: #7c3aed; }
+    .tag-video { background: var(--rose-light); color: #be123c; }
+    .tag-drama { background: var(--blue-light); color: #1d4ed8; }
+    .tag-h5 { background: var(--amber-light); color: #b45309; }
+
+    /* 进入按钮 */
+    .go-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--coral), var(--rose));
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 4px 12px -2px rgba(255,107,107,0.3);
+    }
+    .row-card:hover .go-btn {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .go-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px -4px rgba(255,107,107,0.4);
+    }
+
+    /* 项目名 */
+    .proj-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--ink);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .proj-name:hover { color: var(--coral); }
+
+    /* 装饰球 */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* 页码 */
+    .page-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
+    .page-btn:hover { background: var(--surface); color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .page-btn.on { background: var(--ink); color: #fff; }
+
+    /* 头像 */
+    .avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--coral), var(--violet));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+
+    /* 侧边栏筛选 */
+    .layout { display: flex; gap: 24px; }
+    .filter-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+    }
+    .filter-group-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #b4b4c7;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      padding-left: 4px;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 21px;
+      font-weight: 600;
+      color: #8b8b9e;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 4px;
+    }
+    .filter-item:hover {
+      background: rgba(0,0,0,0.03);
+      color: var(--ink);
+    }
+    .filter-item.on {
+      background: var(--ink);
+      color: #fff;
+    }
+    .filter-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-item-left i {
+      width: 24px;
+      text-align: center;
+      font-size: 21px;
+    }
+    .filter-count {
+      font-size: 18px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.05);
+      color: #8b8b9e;
+      min-width: 32px;
+      text-align: center;
+    }
+    .filter-item.on .filter-count {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+  </style>
+</head>
+<body style="display:flex;">
+
+  <!-- 装饰背景 -->
+  <div class="blob" style="width:400px;height:400px;background:linear-gradient(135deg,#ff6b6b,#f59e0b);top:-100px;right:-100px;"></div>
+
+  <!-- 侧边栏 -->
+  <aside class="filter-sidebar">
+    <div style="padding: 24px 16px 16px;">
+      <div class="flex items-center gap-2.5 mb-6">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ff6b6b] to-[#f43f5e] flex items-center justify-center shadow-lg shadow-[#ff6b6b]/30">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="3"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <span class="font-extrabold text-[16px] tracking-tight">FunMini</span>
+      </div>
+      <div class="filter-group-title">项目类型</div>
+      <div class="filter-item on">
+        <div class="filter-item-left"><i class="fa-solid fa-border-all"></i>全部</div>
+        <span class="filter-count">24</span>
+      </div>
+      <div class="filter-item">
+        <div class="filter-item-left"><i class="fa-solid fa-film" style="color:#e11d48;"></i>影视</div>
+        <span class="filter-count">3</span>
+      </div>
+      <div class="filter-item">
+        <div class="filter-item-left"><i class="fa-solid fa-clapperboard" style="color:#2563eb;"></i>短剧</div>
+        <span class="filter-count">2</span>
+      </div>
+      <div class="filter-item">
+        <div class="filter-item-left"><i class="fa-solid fa-masks-theater" style="color:#9333ea;"></i>漫剧</div>
+        <span class="filter-count">2</span>
+      </div>
+      <div class="filter-item">
+        <div class="filter-item-left"><i class="fa-solid fa-book" style="color:#059669;"></i>小说</div>
+        <span class="filter-count">9</span>
+      </div>
+      <div class="filter-item">
+        <div class="filter-item-left"><i class="fa-solid fa-globe" style="color:#d97706;"></i>H5</div>
+        <span class="filter-count">4</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 主区域 -->
+  <div style="flex:1; display:flex; flex-direction:column; min-width:0;">
+
+    <!-- 顶部 -->
+    <nav class="topbar sticky top-0 z-50">
+      <div class="px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-1">
+          <a class="px-4 py-2 rounded-xl text-[13px] font-bold bg-[#1a1a2e] text-white">项目列表</a>
+          <a class="px-4 py-2 rounded-xl text-[13px] font-semibold text-[#8b8b9e] hover:text-[#1a1a2e] hover:bg-white/60 transition">系统设置</a>
+        </div>
+        <div class="avatar">李</div>
+      </div>
+    </nav>
+
+    <main class="px-6 py-10">
+
+      <!-- 标题 -->
+      <div class="mb-8">
+        <h1 class="text-[32px] font-extrabold tracking-tight mb-2">
+          <span class="title-deco">全部项目</span>
+        </h1>
+        <p class="text-[15px] text-[#8b8b9e]">共 <span class="font-bold text-[#1a1a2e]">24</span> 个项目，点击「进入管理」跳转到对应后台</p>
+      </div>
+
+      <div>
+        <!-- 搜索 -->
+        <div class="flex items-center gap-3 mb-6">
+          <div class="relative" style="flex:1;max-width:320px;">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#c4c4d4] text-sm"></i>
+            <input type="text" placeholder="搜索项目名称、APPID..."
+              class="search-box w-full pl-10 pr-4 py-3 rounded-2xl text-[14px]">
+          </div>
+        </div>
+
+    <!-- 列表 -->
+    <div class="space-y-3">
+
+      <!-- 小说 -->
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-wechat"><i class="fa-brands fa-weixin text-[10px]"></i>微信</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">云游阅读</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">wxf3dbce8da63d05f5</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">2 小时前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-douyin"><i class="fa-brands fa-tiktok text-[10px]"></i>抖音</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">逍遥书阁</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">ttc80dbeb057064e7c01</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">5 小时前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-kuaishou"><i class="fa-solid fa-bolt text-[10px]"></i>快手</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">星辰文学</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">ks717479719227682172</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">昨天</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-douyin"><i class="fa-brands fa-tiktok text-[10px]"></i>抖音</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">清川书阁</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">ttbdb5cb0822bf70b701</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">3 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-douyin"><i class="fa-brands fa-tiktok text-[10px]"></i>抖音</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">素心文苑</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">tt5c6a2ad7c360919e01</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">1 周前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-kuaishou"><i class="fa-solid fa-bolt text-[10px]"></i>快手</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">心悦阅读</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">ks673851098331437079</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">2 周前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-wechat"><i class="fa-brands fa-weixin text-[10px]"></i>微信</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">漫影阅读</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">wx6254861d611ac82f</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">1 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-douyin"><i class="fa-brands fa-tiktok text-[10px]"></i>抖音</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">云梦书阁</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">tt3c5d4ae0a357f1a701</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">4 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-douyin"><i class="fa-brands fa-tiktok text-[10px]"></i>抖音</div>
+        <div class="tag tag-novel">小说</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">阅夏文轩</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">tt1c476afa834dd1bf01</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">9.9.9</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">5 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <!-- 漫剧 -->
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-douyin"><i class="fa-brands fa-tiktok text-[10px]"></i>抖音</div>
+        <div class="tag tag-comic">漫剧</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">漫剧主站</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">tt7a3b9c0d2e1f8a01</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">3.0.2</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">3 小时前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-wechat"><i class="fa-brands fa-weixin text-[10px]"></i>微信</div>
+        <div class="tag tag-comic">漫剧</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">漫剧马甲包</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">wx9e2d4f6a8b3c1d05</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">2.1.0</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">1 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <!-- 影视 -->
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-douyin"><i class="fa-brands fa-tiktok text-[10px]"></i>抖音</div>
+        <div class="tag tag-video">影视</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">影视主站</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">tt3f8a2b1c9d4e7f01</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">2.3.1</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">2 小时前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-wechat"><i class="fa-brands fa-weixin text-[10px]"></i>微信</div>
+        <div class="tag tag-video">影视</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">影视分销</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">wx5a1b9c3d7e2f8g04</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">1.5.2</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">3 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <!-- 短剧 -->
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-kuaishou"><i class="fa-solid fa-bolt text-[10px]"></i>快手</div>
+        <div class="tag tag-drama">短剧</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">短剧A版</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">ks4b2c8d1a5f9e3g06</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">1.0.8</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">今天</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <!-- H5 -->
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-h5"><i class="fa-solid fa-globe text-[10px]"></i>H5</div>
+        <div class="tag tag-h5">H5</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">H5小说配置</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">h5-novel-20260527</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">1.2.0</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">昨天</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-h5"><i class="fa-solid fa-globe text-[10px]"></i>H5</div>
+        <div class="tag tag-h5">H5</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">H5影视配置</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">h5-video-20260526</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">1.0.5</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">3 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-h5"><i class="fa-solid fa-globe text-[10px]"></i>H5</div>
+        <div class="tag tag-h5">H5</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">H5分销平台</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">h5-fenxiao-20260525</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">1.1.0</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">5 天前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+
+      <div class="row-card px-6 py-4 flex items-center gap-4">
+        <div class="plat plat-h5"><i class="fa-solid fa-globe text-[10px]"></i>H5</div>
+        <div class="tag tag-h5">H5</div>
+        <div class="flex-1 min-w-0">
+          <a href="#" class="proj-name">H5拉新活动</a>
+          <div class="text-[11px] text-[#b4b4c7] mt-0.5 font-mono">h5-laxin-20260520</div>
+        </div>
+        <div class="text-[13px] font-mono text-[#8b8b9e] w-20">1.0.1</div>
+        <div class="text-[12px] text-[#b4b4c7] w-24">1 周前</div>
+        <button class="go-btn">进入 <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+      </div>
+    </div>
+
+      </div>
+
+    <!-- 分页 -->
+    <div class="mt-8 flex items-center justify-between">
+      <span class="text-[13px] text-[#b4b4c7]">显示 1-20 条，共 24 条</span>
+      <div class="flex items-center gap-1">
+        <button class="page-btn"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
+        <button class="page-btn on">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn"><i class="fa-solid fa-chevron-right text-[11px]"></i></button>
+      </div>
+    </div>
+
+    <div class="h-16"></div>
+  </main>
+
+</body>
+</html>

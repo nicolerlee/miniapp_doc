@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>风格A - 侧边栏+卡片网格 | FunMiniFactory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+    .card-hover { transition: all 0.2s ease; }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+    .sidebar-item { transition: all 0.15s; }
+    .sidebar-item:hover, .sidebar-item.active { background: rgba(255,255,255,0.1); }
+    .tag-pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 h-screen overflow-hidden flex">
+
+  <!-- 侧边栏 -->
+  <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0">
+    <div class="p-6 flex items-center gap-3 border-b border-slate-700">
+      <div class="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-cubes text-sm"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-lg leading-tight">FunMini</h1>
+        <p class="text-xs text-slate-400">工厂管理中心</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
+      <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2 mt-2">项目分类</div>
+      <a href="#" class="sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm">
+        <i class="fa-solid fa-border-all w-5 text-center text-slate-400"></i>
+        <span>全部项目</span>
+        <span class="ml-auto text-xs bg-slate-700 px-2 py-0.5 rounded">12</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-film w-5 text-center text-rose-400"></i>
+        <span>影视小程序</span>
+        <span class="ml-auto text-xs bg-slate-700 px-2 py-0.5 rounded">3</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-clapperboard w-5 text-center text-pink-400"></i>
+        <span>短剧小程序</span>
+        <span class="ml-auto text-xs bg-slate-700 px-2 py-0.5 rounded">2</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-masks-theater w-5 text-center text-violet-400"></i>
+        <span>漫剧小程序</span>
+        <span class="ml-auto text-xs bg-slate-700 px-2 py-0.5 rounded">2</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-book w-5 text-center text-emerald-400"></i>
+        <span>小说小程序</span>
+        <span class="ml-auto text-xs bg-slate-700 px-2 py-0.5 rounded">2</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-mobile-screen w-5 text-center text-amber-400"></i>
+        <span>H5 项目</span>
+        <span class="ml-auto text-xs bg-slate-700 px-2 py-0.5 rounded">3</span>
+      </a>
+
+      <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2 mt-6">系统</div>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-chart-pie w-5 text-center text-slate-400"></i>
+        <span>数据统计</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i>
+        <span>系统设置</span>
+      </a>
+    </nav>
+
+    <div class="p-4 border-t border-slate-700">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-sm font-bold">李</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate">lijj</p>
+          <p class="text-xs text-slate-400 truncate">管理员</p>
+        </div>
+        <i class="fa-solid fa-arrow-right-from-bracket text-slate-400 text-sm cursor-pointer"></i>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 主体区域 -->
+  <main class="flex-1 flex flex-col min-w-0">
+    <!-- 顶部栏 -->
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
+      <div class="flex items-center gap-4">
+        <h2 class="text-xl font-bold text-gray-900">全部项目</h2>
+        <span class="text-sm text-gray-400">共 12 个项目</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input type="text" placeholder="搜索项目名称..." class="pl-9 pr-4 py-2 bg-gray-100 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+          <i class="fa-solid fa-plus mr-1.5"></i>新增项目
+        </button>
+      </div>
+    </header>
+
+    <!-- 滚动内容区 -->
+    <div class="flex-1 overflow-y-auto p-8">
+      <!-- 统计卡片 -->
+      <div class="grid grid-cols-4 gap-5 mb-8">
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm text-gray-500">项目总数</span>
+            <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-cubes text-blue-600 text-sm"></i></div>
+          </div>
+          <p class="text-3xl font-bold text-gray-900">12</p>
+          <p class="text-xs text-emerald-600 mt-1 font-medium"><i class="fa-solid fa-arrow-up mr-1"></i>本月新增 2 个</p>
+        </div>
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm text-gray-500">小程序项目</span>
+            <div class="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-rocket text-violet-600 text-sm"></i></div>
+          </div>
+          <p class="text-3xl font-bold text-gray-900">9</p>
+          <p class="text-xs text-gray-400 mt-1">影视 / 短剧 / 漫剧 / 小说</p>
+        </div>
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm text-gray-500">H5 项目</span>
+            <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-globe text-amber-600 text-sm"></i></div>
+          </div>
+          <p class="text-3xl font-bold text-gray-900">3</p>
+          <p class="text-xs text-gray-400 mt-1">小说 / 影视 / 分销 / 拉新</p>
+        </div>
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm text-gray-500">今日构建</span>
+            <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-hammer text-emerald-600 text-sm"></i></div>
+          </div>
+          <p class="text-3xl font-bold text-gray-900">5</p>
+          <p class="text-xs text-emerald-600 mt-1 font-medium"><i class="fa-solid fa-arrow-up mr-1"></i>较昨日 +2</p>
+        </div>
+      </div>
+
+      <!-- 筛选标签 -->
+      <div class="flex items-center gap-2 mb-6">
+        <span class="text-sm font-medium text-gray-700 mr-2">快速筛选:</span>
+        <button class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg font-medium">全部</button>
+        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs rounded-lg hover:border-gray-300">影视</button>
+        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs rounded-lg hover:border-gray-300">短剧</button>
+        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs rounded-lg hover:border-gray-300">漫剧</button>
+        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs rounded-lg hover:border-gray-300">小说</button>
+        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs rounded-lg hover:border-gray-300">H5</button>
+      </div>
+
+      <!-- 项目卡片网格 -->
+      <div class="grid grid-cols-3 gap-5">
+        <!-- 影视 -->
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-rose-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-film text-rose-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-rose-50 text-rose-600">影视小程序</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">影视小程序-主站</h3>
+          <p class="text-xs text-gray-400 mb-4 line-clamp-2">主站影视小程序自动创建与管理系统</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+              <div class="w-5 h-5 rounded-full bg-gray-300 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">2 小时前更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-rose-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-film text-rose-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-rose-50 text-rose-600">影视小程序</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">影视小程序-分销</h3>
+          <p class="text-xs text-gray-400 mb-4">影视分销推广小程序管理系统</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">昨天更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 短剧 -->
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-pink-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-clapperboard text-pink-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-pink-50 text-pink-600">短剧小程序</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">短剧小程序-A版</h3>
+          <p class="text-xs text-gray-400 mb-4">短剧内容分发与播放小程序</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+              <div class="w-5 h-5 rounded-full bg-gray-300 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">3 天前更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 漫剧 -->
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-violet-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-masks-theater text-violet-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-violet-50 text-violet-600">漫剧小程序</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">漫剧小程序-主站</h3>
+          <p class="text-xs text-gray-400 mb-4">漫剧内容管理与发布平台</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">5 小时前更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-violet-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-masks-theater text-violet-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-violet-50 text-violet-600">漫剧小程序</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">漫剧小程序-马甲包</h3>
+          <p class="text-xs text-gray-400 mb-4">漫剧马甲小程序创建中心</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">1 周前更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 小说 -->
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-book text-emerald-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-emerald-50 text-emerald-600">小说小程序</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">小说小程序-主站</h3>
+          <p class="text-xs text-gray-400 mb-4">小说阅读与内容管理平台</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+              <div class="w-5 h-5 rounded-full bg-gray-300 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">今天更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-book text-emerald-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-emerald-50 text-emerald-600">小说小程序</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">小说小程序-分销</h3>
+          <p class="text-xs text-gray-400 mb-4">小说分销推广管理系统</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">2 天前更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <!-- H5 -->
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-globe text-amber-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-amber-50 text-amber-600">H5小说</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">H5 小说配置平台</h3>
+          <p class="text-xs text-gray-400 mb-4">H5 小说页面配置与管理系统</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">昨天更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-100 p-5 card-hover cursor-pointer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-globe text-amber-500 text-lg"></i>
+            </div>
+            <span class="tag-pill bg-amber-50 text-amber-600">H5影视</span>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-1">H5 影视配置平台</h3>
+          <p class="text-xs text-gray-400 mb-4">H5 影视内容展示配置系统</p>
+          <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+            <div class="flex -space-x-1.5">
+              <div class="w-5 h-5 rounded-full bg-gray-200 border-2 border-white"></div>
+            </div>
+            <span class="text-xs text-gray-400">3 天前更新</span>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 rounded-lg font-medium transition">进入管理</button>
+            <button class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs py-2 rounded-lg font-medium transition">查看详情</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

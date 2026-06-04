@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>风格D - 统一大列表 | FunMiniFactory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+    .sidebar-item { transition: all 0.15s; }
+    .sidebar-item:hover, .sidebar-item.active { background: rgba(255,255,255,0.1); }
+    .table-row { transition: background 0.15s; }
+    .table-row:hover { background: #f8fafc; }
+    .tag-pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .btn-icon { transition: all 0.15s; }
+    .btn-icon:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 h-screen overflow-hidden flex">
+
+  <!-- 侧边栏 -->
+  <aside class="w-56 bg-slate-900 text-white flex flex-col flex-shrink-0">
+    <div class="p-5 flex items-center gap-3 border-b border-slate-700">
+      <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-cubes text-sm"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-base leading-tight">FunMini</h1>
+        <p class="text-[11px] text-slate-400">工厂管理中心</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-3 px-2.5 space-y-0.5 scrollbar-hide">
+      <a href="#" class="sidebar-item active flex items-center gap-3 px-3 py-2 rounded-lg text-sm">
+        <i class="fa-solid fa-table-list w-5 text-center text-slate-400"></i>
+        <span>全部项目</span>
+        <span class="ml-auto text-[11px] bg-slate-700 px-1.5 py-0.5 rounded">24</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-chart-pie w-5 text-center text-slate-400"></i>
+        <span>数据统计</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400"></i>
+        <span>构建记录</span>
+      </a>
+      <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300">
+        <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i>
+        <span>系统设置</span>
+      </a>
+    </nav>
+
+    <div class="p-4 border-t border-slate-700">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xs font-bold">李</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate">lijj</p>
+          <p class="text-[11px] text-slate-400 truncate">管理员</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 主体 -->
+  <main class="flex-1 flex flex-col min-w-0">
+    <!-- 顶部栏 -->
+    <header class="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <h2 class="text-lg font-bold text-gray-900">全部项目</h2>
+        <span class="text-xs text-gray-400">共 24 个项目</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-lg text-sm font-medium transition">
+          <i class="fa-solid fa-plus mr-1.5 text-xs"></i>新增项目
+        </button>
+      </div>
+    </header>
+
+    <!-- 筛选区 -->
+    <div class="bg-white border-b border-gray-200 px-6 py-3 flex items-center gap-3 flex-shrink-0 flex-wrap">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+        <input type="text" placeholder="搜索名称 / APPID / 包ID..." class="pl-8 pr-3 py-1.5 bg-gray-100 rounded-lg text-sm w-56 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div class="h-5 w-px bg-gray-200 mx-1"></div>
+      <!-- 类型筛选 -->
+      <select class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option>全部类型</option>
+        <option>影视小程序</option>
+        <option>短剧小程序</option>
+        <option>漫剧小程序</option>
+        <option>小说小程序</option>
+        <option>H5 项目</option>
+      </select>
+      <!-- 平台筛选 -->
+      <select class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option>全部平台</option>
+        <option>微信</option>
+        <option>抖音</option>
+        <option>快手</option>
+      </select>
+      <!-- 状态筛选 -->
+      <select class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option>全部状态</option>
+        <option>运行中</option>
+        <option>待审核</option>
+        <option>已下线</option>
+      </select>
+      <div class="flex-1"></div>
+      <button class="text-gray-400 hover:text-gray-600 transition p-1.5 rounded-lg hover:bg-gray-100" title="刷新">
+        <i class="fa-solid fa-rotate-right text-sm"></i>
+      </button>
+    </div>
+
+    <!-- 表格区 -->
+    <div class="flex-1 overflow-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 sticky top-0 z-10">
+          <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <th class="px-6 py-3 w-16">平台</th>
+            <th class="px-4 py-3">类型</th>
+            <th class="px-4 py-3">项目名称</th>
+            <th class="px-4 py-3">APPID</th>
+            <th class="px-4 py-3">版本号</th>
+            <th class="px-4 py-3">归属人</th>
+            <th class="px-4 py-3">状态</th>
+            <th class="px-4 py-3">更新时间</th>
+            <th class="px-6 py-3 text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white">
+          <!-- 小说 -->
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-medium border border-emerald-100">
+                <i class="fa-brands fa-weixin text-[10px]"></i>微信
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-emerald-50 text-emerald-600">小说</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">云游阅读</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-novel-yunyou-we</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">wxf3dbce8da63d05f5</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">9.9.9</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-[11px] font-medium border border-amber-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>待审核
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">2 小时前</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑">
+                  <i class="fa-solid fa-pen-to-square text-xs"></i>
+                </button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布">
+                  <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除">
+                  <i class="fa-solid fa-trash text-xs"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-gray-900 text-white rounded-md text-xs font-medium border border-gray-700">
+                <i class="fa-brands fa-tiktok text-[10px]"></i>抖音
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-emerald-50 text-emerald-600">小说</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">逍遥书阁</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-novel-xiaoyao-do</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">ttc80dbeb057064e7c01</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">9.9.9</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-[11px] font-medium border border-amber-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>待审核
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">5 小时前</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-orange-50 text-orange-700 rounded-md text-xs font-medium border border-orange-100">
+                <i class="fa-solid fa-bolt text-[10px]"></i>快手
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-emerald-50 text-emerald-600">小说</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">星辰文学</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-novel-xingchen-ku</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">ks717479719227682172</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">9.9.9</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-medium border border-emerald-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>运行中
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">昨天</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 漫剧 -->
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-gray-900 text-white rounded-md text-xs font-medium border border-gray-700">
+                <i class="fa-brands fa-tiktok text-[10px]"></i>抖音
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-violet-50 text-violet-600">漫剧</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">漫剧主站</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-comic-main-do</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">tt7a3b9c0d2e1f8a01</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">3.0.2</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-medium border border-emerald-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>运行中
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">3 小时前</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-medium border border-emerald-100">
+                <i class="fa-brands fa-weixin text-[10px]"></i>微信
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-violet-50 text-violet-600">漫剧</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">漫剧马甲包</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-comic-clone-we</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">wx9e2d4f6a8b3c1d05</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">2.1.0</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-medium border border-emerald-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>运行中
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">1 天前</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 影视 -->
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-gray-900 text-white rounded-md text-xs font-medium border border-gray-700">
+                <i class="fa-brands fa-tiktok text-[10px]"></i>抖音
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-rose-50 text-rose-600">影视</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">影视主站</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-video-main-do</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">tt3f8a2b1c9d4e7f01</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">2.3.1</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-medium border border-emerald-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>运行中
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">2 小时前</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-medium border border-emerald-100">
+                <i class="fa-brands fa-weixin text-[10px]"></i>微信
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-rose-50 text-rose-600">影视</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">影视分销</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-video-share-we</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">wx5a1b9c3d7e2f8g04</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">1.5.2</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-50 text-gray-500 rounded-full text-[11px] font-medium border border-gray-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已下线
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">3 天前</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 短剧 -->
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-orange-50 text-orange-700 rounded-md text-xs font-medium border border-orange-100">
+                <i class="fa-solid fa-bolt text-[10px]"></i>快手
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-pink-50 text-pink-600">短剧</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">短剧A版</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-drama-a-ku</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">ks4b2c8d1a5f9e3g06</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">1.0.8</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-medium border border-emerald-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>运行中
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">今天</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- H5 -->
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-xs font-medium border border-amber-100">
+                <i class="fa-solid fa-globe text-[10px]"></i>H5
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-amber-50 text-amber-600">H5</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">H5小说配置</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-h5-novel-web</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">h5-novel-20260527</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">1.2.0</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-medium border border-emerald-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>运行中
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">昨天</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="table-row cursor-pointer">
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-amber-50 text-amber-700 rounded-md text-xs font-medium border border-amber-100">
+                <i class="fa-solid fa-globe text-[10px]"></i>H5
+              </span>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="tag-pill bg-amber-50 text-amber-600">H5</span>
+            </td>
+            <td class="px-4 py-3.5">
+              <div class="font-medium text-gray-900">H5影视配置</div>
+              <div class="text-[11px] text-gray-400 mt-0.5">pkg-h5-video-web</div>
+            </td>
+            <td class="px-4 py-3.5 text-gray-500 font-mono text-xs">h5-video-20260526</td>
+            <td class="px-4 py-3.5 text-gray-500 text-xs">1.0.5</td>
+            <td class="px-4 py-3.5">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">L</div>
+                <span class="text-gray-600 text-xs">lijj</span>
+              </div>
+            </td>
+            <td class="px-4 py-3.5">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-[11px] font-medium border border-amber-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>待审核
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-gray-400 text-xs">3 天前</td>
+            <td class="px-6 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600" title="编辑"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-emerald-600" title="发布"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <button class="btn-icon w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500" title="删除"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 分页 -->
+      <div class="px-6 py-3 bg-white border-t border-gray-100 flex items-center justify-between">
+        <span class="text-xs text-gray-400">显示 1-10 条，共 24 条</span>
+        <div class="flex items-center gap-1">
+          <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 text-xs"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="w-7 h-7 flex items-center justify-center rounded-lg bg-blue-600 text-white text-xs font-medium">1</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs">2</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs">3</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 text-xs"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

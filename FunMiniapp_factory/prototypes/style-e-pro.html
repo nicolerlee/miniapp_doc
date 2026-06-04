@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FunMini Factory - 项目总览</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans SC', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            surface: '#f7f8fa',
+            ink: '#0f172a',
+            'ink-secondary': '#475569',
+            'ink-tertiary': '#94a3b8',
+            border: '#e2e8f0',
+            'border-light': '#f1f5f9',
+            brand: {
+              DEFAULT: '#4f46e5',
+              light: '#e0e7ff',
+              dark: '#3730a3',
+            },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f7f8fa;
+      color: #0f172a;
+    }
+    
+    /* 玻璃拟态侧边栏 */
+    .glass-sidebar {
+      background: rgba(15, 23, 42, 0.97);
+      backdrop-filter: blur(20px);
+    }
+    
+    /* 精致的表格 */
+    .pro-table tbody tr {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .pro-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    .pro-table tbody tr:hover {
+      background: #f8fafc;
+      transform: scale(1.002);
+    }
+    
+    /* 平台徽章 */
+    .platform-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    
+    /* 类型标签 */
+    .type-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    
+    /* 状态指示器 */
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      position: relative;
+    }
+    .status-dot::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background: inherit;
+      opacity: 0.3;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    /* 进入按钮 */
+    .enter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #64748b;
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .enter-btn:hover {
+      background: #f1f5f9;
+      color: #4f46e5;
+      border-color: #e2e8f0;
+    }
+    .pro-table tbody tr:hover .enter-btn {
+      background: #eef2ff;
+      color: #4f46e5;
+      border-color: #c7d2fe;
+    }
+    
+    /* 搜索框 */
+    .search-box {
+      background: #f1f5f9;
+      border: 1.5px solid transparent;
+      transition: all 0.2s;
+    }
+    .search-box:focus {
+      background: white;
+      border-color: #c7d2fe;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+    }
+    
+    /* 筛选器 */
+    .filter-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+    
+    /* 统计卡片 */
+    .stat-card {
+      background: white;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    .stat-card:hover {
+      box-shadow: 0 4px 20px -4px rgba(0,0,0,0.06);
+      border-color: #e2e8f0;
+    }
+    
+    /* 头像 */
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* 项目名链接 */
+    .project-name {
+      color: #0f172a;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .project-name:hover {
+      color: #4f46e5;
+    }
+    
+    /* 滚动条美化 */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    
+    /* 导航项 */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #94a3b8;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+    .nav-item:hover {
+      background: rgba(255,255,255,0.06);
+      color: #e2e8f0;
+    }
+    .nav-item.active {
+      background: rgba(79, 70, 229, 0.15);
+      color: #818cf8;
+    }
+    
+    /* 页码 */
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 13px;
+      transition: all 0.15s;
+    }
+    .page-btn:hover:not(.active) {
+      background: #f1f5f9;
+    }
+    .page-btn.active {
+      background: #4f46e5;
+      color: white;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body class="h-screen overflow-hidden flex">
+
+  <!-- 侧边栏 -->
+  <aside class="w-60 glass-sidebar text-white flex flex-col flex-shrink-0">
+    <!-- Logo -->
+    <div class="p-6 pb-5">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-bold text-[15px] tracking-tight">FunMini</h1>
+          <p class="text-[11px] text-slate-400 font-medium">Factory</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 导航 -->
+    <nav class="flex-1 px-3 space-y-0.5 custom-scroll overflow-y-auto">
+      <div class="px-3 pb-2 pt-1">
+        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Menu</span>
+      </div>
+      <a class="nav-item active">
+        <i class="fa-solid fa-layer-group w-4 text-center text-xs"></i>
+        <span>项目总览</span>
+        <span class="ml-auto text-[10px] bg-slate-700/60 px-1.5 py-0.5 rounded-md text-slate-300">24</span>
+      </a>
+      <a class="nav-item">
+        <i class="fa-solid fa-chart-line w-4 text-center text-xs"></i>
+        <span>数据看板</span>
+      </a>
+      <a class="nav-item">
+        <i class="fa-solid fa-clock-rotate-left w-4 text-center text-xs"></i>
+        <span>构建记录</span>
+      </a>
+
+      <div class="px-3 pb-2 pt-5">
+        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Quick Access</span>
+      </div>
+      <a class="nav-item">
+        <span class="w-4 h-4 rounded bg-rose-500/20 flex items-center justify-center">
+          <i class="fa-solid fa-film text-[8px] text-rose-400"></i>
+        </span>
+        <span>影视后台</span>
+      </a>
+      <a class="nav-item">
+        <span class="w-4 h-4 rounded bg-violet-500/20 flex items-center justify-center">
+          <i class="fa-solid fa-masks-theater text-[8px] text-violet-400"></i>
+        </span>
+        <span>漫剧后台</span>
+      </a>
+      <a class="nav-item">
+        <span class="w-4 h-4 rounded bg-emerald-500/20 flex items-center justify-center">
+          <i class="fa-solid fa-book text-[8px] text-emerald-400"></i>
+        </span>
+        <span>小说后台</span>
+      </a>
+      <a class="nav-item">
+        <span class="w-4 h-4 rounded bg-amber-500/20 flex items-center justify-center">
+          <i class="fa-solid fa-globe text-[8px] text-amber-400"></i>
+        </span>
+        <span>H5 配置</span>
+      </a>
+    </nav>
+
+    <!-- 用户信息 -->
+    <div class="p-4 mx-3 mb-3 rounded-xl bg-white/5 border border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="avatar w-8 h-8 text-xs">李</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-[13px] font-medium text-slate-200 truncate">lijj</p>
+          <p class="text-[11px] text-slate-500 truncate">管理员</p>
+        </div>
+        <i class="fa-solid fa-arrow-right-from-bracket text-slate-500 text-xs cursor-pointer hover:text-slate-300 transition"></i>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 主体 -->
+  <main class="flex-1 flex flex-col min-w-0">
+    <!-- 顶部 -->
+    <header class="h-16 bg-white/80 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between px-8 flex-shrink-0 sticky top-0 z-20">
+      <div>
+        <h2 class="text-lg font-semibold text-slate-900 tracking-tight">项目总览</h2>
+        <p class="text-xs text-slate-400 mt-0.5">管理和访问所有小程序与 H5 项目</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-xl transition-all shadow-lg shadow-slate-900/10 hover:shadow-xl hover:shadow-slate-900/15 hover:-translate-y-px">
+          <i class="fa-solid fa-plus text-[10px]"></i>
+          新增项目
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-auto custom-scroll">
+      <div class="max-w-[1400px] mx-auto px-8 py-6">
+        
+        <!-- 统计卡片 -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+          <div class="stat-card">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">项目总数</span>
+              <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">
+                <i class="fa-solid fa-cubes text-indigo-500 text-xs"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-bold text-slate-900 tracking-tight">24</p>
+            <div class="flex items-center gap-1.5 mt-2">
+              <span class="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+                <i class="fa-solid fa-arrow-trend-up text-[9px]"></i>+3
+              </span>
+              <span class="text-[11px] text-slate-400">本月新增</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">运行中</span>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-bold text-slate-900 tracking-tight">21</p>
+            <div class="flex items-center gap-1.5 mt-2">
+              <span class="text-[11px] text-slate-400">占比</span>
+              <span class="text-[11px] text-slate-600 font-medium">87.5%</span>
+              <div class="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden max-w-[60px]">
+                <div class="h-full bg-emerald-500 rounded-full" style="width: 87.5%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">待审核</span>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                <i class="fa-solid fa-clock text-amber-500 text-xs"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-bold text-slate-900 tracking-tight">2</p>
+            <div class="flex items-center gap-1.5 mt-2">
+              <span class="text-[11px] text-amber-600 font-medium">需要关注</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">今日构建</span>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                <i class="fa-solid fa-hammer text-blue-500 text-xs"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-bold text-slate-900 tracking-tight">5</p>
+            <div class="flex items-center gap-1.5 mt-2">
+              <span class="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+                <i class="fa-solid fa-arrow-trend-up text-[9px]"></i>+2
+              </span>
+              <span class="text-[11px] text-slate-400">较昨日</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="flex items-center gap-3 mb-5">
+          <div class="relative flex-1 max-w-md">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" placeholder="搜索项目名称、APPID、包ID..." 
+              class="search-box w-full pl-9 pr-4 py-2.5 rounded-xl text-[13px] text-slate-700 placeholder:text-slate-400 focus:outline-none">
+          </div>
+          
+          <div class="h-5 w-px bg-slate-200"></div>
+          
+          <select class="filter-select px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-[13px] text-slate-600 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer hover:border-slate-300">
+            <option>全部类型</option>
+            <option>影视小程序</option>
+            <option>短剧小程序</option>
+            <option>漫剧小程序</option>
+            <option>小说小程序</option>
+            <option>H5 项目</option>
+          </select>
+          
+          <select class="filter-select px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-[13px] text-slate-600 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer hover:border-slate-300">
+            <option>全部平台</option>
+            <option>微信</option>
+            <option>抖音</option>
+            <option>快手</option>
+            <option>H5</option>
+          </select>
+          
+          <select class="filter-select px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-[13px] text-slate-600 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer hover:border-slate-300">
+            <option>全部状态</option>
+            <option>运行中</option>
+            <option>待审核</option>
+            <option>已下线</option>
+          </select>
+          
+          <div class="flex-1"></div>
+          
+          <button class="w-9 h-9 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all" title="刷新">
+            <i class="fa-solid fa-rotate-right text-xs"></i>
+          </button>
+        </div>
+
+        <!-- 表格 -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm shadow-slate-100/50 overflow-hidden">
+          <table class="pro-table w-full text-[13px]">
+            <thead>
+              <tr class="bg-slate-50/80">
+                <th class="px-5 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-20">平台</th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-24">类型</th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider">项目信息</th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-48">APPID</th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-20">版本</th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-24">归属</th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-28">状态</th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-28">更新时间</th>
+                <th class="px-5 py-3.5 text-right text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-28">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 小说 -->
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-emerald-500/10 text-emerald-700 border border-emerald-200/50">
+                    <i class="fa-brands fa-weixin text-[9px]"></i>微信
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-emerald-50 text-emerald-700">小说</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">云游阅读</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-novel-yunyou-we</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">wxf3dbce8da63d05f5</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">9.9.9</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-amber-500"></span>待审核
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">2 小时前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-slate-900 text-white border border-slate-700">
+                    <i class="fa-brands fa-tiktok text-[9px]"></i>抖音
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-emerald-50 text-emerald-700">小说</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">逍遥书阁</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-novel-xiaoyao-do</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">ttc80dbeb057064e7c01</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">9.9.9</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-amber-500"></span>待审核
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">5 小时前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-orange-500/10 text-orange-700 border border-orange-200/50">
+                    <i class="fa-solid fa-bolt text-[9px]"></i>快手
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-emerald-50 text-emerald-700">小说</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">星辰文学</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-novel-xingchen-ku</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">ks717479719227682172</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">9.9.9</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-emerald-500"></span>运行中
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">昨天</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-slate-900 text-white border border-slate-700">
+                    <i class="fa-brands fa-tiktok text-[9px]"></i>抖音
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-emerald-50 text-emerald-700">小说</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">清川书阁</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-novel-qingchuan-do</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">ttbdb5cb0822bf70b701</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">9.9.9</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-emerald-500"></span>运行中
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">3 天前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-slate-900 text-white border border-slate-700">
+                    <i class="fa-brands fa-tiktok text-[9px]"></i>抖音
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-emerald-50 text-emerald-700">小说</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">素心文苑</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-novel-suxin-do</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">tt5c6a2ad7c360919e01</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">9.9.9</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-amber-500"></span>待审核
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">1 周前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- 漫剧 -->
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-slate-900 text-white border border-slate-700">
+                    <i class="fa-brands fa-tiktok text-[9px]"></i>抖音
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-violet-50 text-violet-700">漫剧</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">漫剧主站</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-comic-main-do</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">tt7a3b9c0d2e1f8a01</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">3.0.2</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-emerald-500"></span>运行中
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">3 小时前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-emerald-500/10 text-emerald-700 border border-emerald-200/50">
+                    <i class="fa-brands fa-weixin text-[9px]"></i>微信
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-violet-50 text-violet-700">漫剧</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">漫剧马甲包</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-comic-clone-we</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">wx9e2d4f6a8b3c1d05</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">2.1.0</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-emerald-500"></span>运行中
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">1 天前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- 影视 -->
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-slate-900 text-white border border-slate-700">
+                    <i class="fa-brands fa-tiktok text-[9px]"></i>抖音
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-rose-50 text-rose-700">影视</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">影视主站</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-video-main-do</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">tt3f8a2b1c9d4e7f01</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">2.3.1</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-emerald-500"></span>运行中
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">2 小时前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-emerald-500/10 text-emerald-700 border border-emerald-200/50">
+                    <i class="fa-brands fa-weixin text-[9px]"></i>微信
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-rose-50 text-rose-700">影视</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">影视分销</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-video-share-we</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">wx5a1b9c3d7e2f8g04</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">1.5.2</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>已下线
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">3 天前</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- 短剧 -->
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-orange-500/10 text-orange-700 border border-orange-200/50">
+                    <i class="fa-solid fa-bolt text-[9px]"></i>快手
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-pink-50 text-pink-700">短剧</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">短剧A版</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-drama-a-ku</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">ks4b2c8d1a5f9e3g06</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">1.0.8</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-emerald-500"></span>运行中
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">今天</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- H5 -->
+              <tr>
+                <td class="px-5 py-4">
+                  <span class="platform-badge bg-amber-500/10 text-amber-700 border border-amber-200/50">
+                    <i class="fa-solid fa-globe text-[9px]"></i>H5
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="type-tag bg-amber-50 text-amber-700">H5</span>
+                </td>
+                <td class="px-4 py-4">
+                  <a href="#" class="project-name">H5小说配置</a>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">pkg-h5-novel-web</p>
+                </td>
+                <td class="px-4 py-4 text-slate-400 font-mono text-[12px]">h5-novel-20260527</td>
+                <td class="px-4 py-4 text-slate-500 text-[12px] font-mono">1.2.0</td>
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="avatar">李</div>
+                    <span class="text-slate-500 text-[12px]">lijj</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <span class="status-dot bg-emerald-500"></span>运行中
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-slate-400 text-[12px]">昨天</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="enter-btn">
+                    <span>进入管理</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- 分页 -->
+          <div class="px-5 py-3.5 border-t border-slate-50 flex items-center justify-between">
+            <span class="text-[12px] text-slate-400">显示 1-12 条，共 24 条</span>
+            <div class="flex items-center gap-1">
+              <button class="page-btn text-slate-400 hover:text-slate-600"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn text-slate-600">2</button>
+              <button class="page-btn text-slate-400 hover:text-slate-600"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

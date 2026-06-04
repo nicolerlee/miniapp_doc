@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>风格B - Dashboard数据看板 | FunMiniFactory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; }
+    .card-hover { transition: all 0.2s ease; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -5px rgba(0,0,0,0.08); }
+    .chart-bar { transition: width 0.6s ease; }
+    .progress-ring { transform: rotate(-90deg); }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+  <!-- 顶部导航 -->
+  <nav class="bg-white border-b border-gray-200 px-8 h-16 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-8">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
+          <i class="fa-solid fa-cubes text-white text-sm"></i>
+        </div>
+        <span class="font-bold text-lg text-gray-900">FunMiniFactory</span>
+      </div>
+      <div class="hidden md:flex items-center gap-1">
+        <a href="#" class="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">总览</a>
+        <a href="#" class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 rounded-lg hover:bg-gray-50 transition">项目管理</a>
+        <a href="#" class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 rounded-lg hover:bg-gray-50 transition">构建记录</a>
+        <a href="#" class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 rounded-lg hover:bg-gray-50 transition">统计分析</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+        <input type="text" placeholder="搜索..." class="pl-8 pr-3 py-1.5 bg-gray-100 rounded-lg text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold cursor-pointer">李</div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-8 py-8">
+    <!-- 欢迎语 -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900 mb-1">工厂数据看板</h1>
+      <p class="text-sm text-gray-500">实时监控所有小程序与 H5 项目的运行状态</p>
+    </div>
+
+    <!-- 统计数字行 -->
+    <div class="grid grid-cols-5 gap-4 mb-8">
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <p class="text-xs text-gray-400 mb-1">项目总数</p>
+        <p class="text-2xl font-bold text-gray-900">12</p>
+        <div class="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-blue-500 rounded-full" style="width: 100%"></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <p class="text-xs text-gray-400 mb-1">今日构建</p>
+        <p class="text-2xl font-bold text-gray-900">5</p>
+        <div class="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-emerald-500 rounded-full" style="width: 60%"></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <p class="text-xs text-gray-400 mb-1">本周发布</p>
+        <p class="text-2xl font-bold text-gray-900">8</p>
+        <div class="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-violet-500 rounded-full" style="width: 75%"></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <p class="text-xs text-gray-400 mb-1">运行中</p>
+        <p class="text-2xl font-bold text-gray-900">11</p>
+        <div class="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-amber-500 rounded-full" style="width: 92%"></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <p class="text-xs text-gray-400 mb-1">异常项目</p>
+        <p class="text-2xl font-bold text-gray-900">1</p>
+        <div class="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-red-500 rounded-full" style="width: 8%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表区 + 分布 -->
+    <div class="grid grid-cols-3 gap-5 mb-8">
+      <!-- 构建趋势（模拟柱状图） -->
+      <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm col-span-2">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-bold text-gray-900">近7日构建趋势</h3>
+          <select class="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-500">
+            <option>近7天</option>
+            <option>近30天</option>
+          </select>
+        </div>
+        <div class="flex items-end gap-3 h-40">
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full bg-blue-100 rounded-t-lg relative group" style="height: 45%">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-600 opacity-0 group-hover:opacity-100 transition">5</div>
+            </div>
+            <span class="text-xs text-gray-400">周一</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full bg-blue-200 rounded-t-lg relative group" style="height: 62%">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-600 opacity-0 group-hover:opacity-100 transition">8</div>
+            </div>
+            <span class="text-xs text-gray-400">周二</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full bg-blue-300 rounded-t-lg relative group" style="height: 38%">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-600 opacity-0 group-hover:opacity-100 transition">4</div>
+            </div>
+            <span class="text-xs text-gray-400">周三</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full bg-blue-400 rounded-t-lg relative group" style="height: 78%">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition">10</div>
+            </div>
+            <span class="text-xs text-gray-400">周四</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full bg-blue-500 rounded-t-lg relative group" style="height: 55%">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-600 opacity-0 group-hover:opacity-100 transition">6</div>
+            </div>
+            <span class="text-xs text-gray-400">周五</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full bg-blue-400 rounded-t-lg relative group" style="height: 85%">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition">11</div>
+            </div>
+            <span class="text-xs text-gray-400">周六</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full bg-blue-300 rounded-t-lg relative group" style="height: 32%">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-600 opacity-0 group-hover:opacity-100 transition">3</div>
+            </div>
+            <span class="text-xs text-gray-400">周日</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 项目类型分布（模拟饼图用进度环） -->
+      <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+        <h3 class="font-bold text-gray-900 mb-5">项目类型分布</h3>
+        <div class="flex items-center justify-center mb-5">
+          <div class="relative w-32 h-32">
+            <svg class="w-32 h-32 progress-ring">
+              <circle cx="64" cy="64" r="56" fill="none" stroke="#f3f4f6" stroke-width="12"/>
+              <circle cx="64" cy="64" r="56" fill="none" stroke="#3b82f6" stroke-width="12" stroke-dasharray="220" stroke-dashoffset="55" stroke-linecap="round"/>
+              <circle cx="64" cy="64" r="56" fill="none" stroke="#10b981" stroke-width="12" stroke-dasharray="220" stroke-dashoffset="165" stroke-linecap="round"/>
+              <circle cx="64" cy="64" r="56" fill="none" stroke="#f59e0b" stroke-width="12" stroke-dasharray="220" stroke-dashoffset="198" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-2xl font-bold text-gray-900">12</span>
+              <span class="text-xs text-gray-400">个项目</span>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span><span class="text-gray-600">影视小程序</span></div>
+            <span class="font-semibold text-gray-900">3</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span><span class="text-gray-600">漫剧小程序</span></div>
+            <span class="font-semibold text-gray-900">2</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span><span class="text-gray-600">短剧小程序</span></div>
+            <span class="font-semibold text-gray-900">2</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-gray-600">小说小程序</span></div>
+            <span class="font-semibold text-gray-900">2</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-gray-600">H5 项目</span></div>
+            <span class="font-semibold text-gray-900">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最近活跃项目 + 快捷入口 -->
+    <div class="grid grid-cols-3 gap-5">
+      <!-- 最近更新 -->
+      <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm col-span-2">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-bold text-gray-900">最近活跃项目</h3>
+          <a href="#" class="text-xs text-blue-600 hover:text-blue-700 font-medium">查看全部 <i class="fa-solid fa-arrow-right ml-0.5"></i></a>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition cursor-pointer card-hover">
+            <div class="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-film text-rose-500"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-sm text-gray-900">影视小程序-主站</span>
+                <span class="text-[10px] px-1.5 py-0.5 bg-rose-50 text-rose-600 rounded font-medium">影视</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">2 小时前构建成功 · v2.3.1</p>
+            </div>
+            <span class="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-1 rounded">运行中</span>
+            <button class="text-gray-400 hover:text-blue-600 transition"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></button>
+          </div>
+
+          <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition cursor-pointer card-hover">
+            <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-book text-emerald-500"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-sm text-gray-900">小说小程序-主站</span>
+                <span class="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded font-medium">小说</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">今天构建成功 · v1.8.4</p>
+            </div>
+            <span class="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-1 rounded">运行中</span>
+            <button class="text-gray-400 hover:text-blue-600 transition"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></button>
+          </div>
+
+          <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition cursor-pointer card-hover">
+            <div class="w-10 h-10 bg-violet-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-masks-theater text-violet-500"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-sm text-gray-900">漫剧小程序-主站</span>
+                <span class="text-[10px] px-1.5 py-0.5 bg-violet-50 text-violet-600 rounded font-medium">漫剧</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">5 小时前构建成功 · v3.0.2</p>
+            </div>
+            <span class="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-1 rounded">运行中</span>
+            <button class="text-gray-400 hover:text-blue-600 transition"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></button>
+          </div>
+
+          <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition cursor-pointer card-hover">
+            <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-globe text-amber-500"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-sm text-gray-900">H5 分销平台</span>
+                <span class="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded font-medium">H5</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">3 天前更新配置</p>
+            </div>
+            <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded">待更新</span>
+            <button class="text-gray-400 hover:text-blue-600 transition"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快捷入口 -->
+      <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+        <h3 class="font-bold text-gray-900 mb-5">快速入口</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <a href="#" class="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:bg-blue-50 transition group">
+            <div class="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center group-hover:bg-white transition">
+              <i class="fa-solid fa-film text-rose-500"></i>
+            </div>
+            <span class="text-xs font-medium text-gray-700">影视后台</span>
+          </a>
+          <a href="#" class="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-violet-300 hover:bg-violet-50 transition group">
+            <div class="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center group-hover:bg-white transition">
+              <i class="fa-solid fa-masks-theater text-violet-500"></i>
+            </div>
+            <span class="text-xs font-medium text-gray-700">漫剧后台</span>
+          </a>
+          <a href="#" class="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-emerald-300 hover:bg-emerald-50 transition group">
+            <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-white transition">
+              <i class="fa-solid fa-book text-emerald-500"></i>
+            </div>
+            <span class="text-xs font-medium text-gray-700">小说后台</span>
+          </a>
+          <a href="#" class="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition group">
+            <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center group-hover:bg-white transition">
+              <i class="fa-solid fa-globe text-amber-500"></i>
+            </div>
+            <span class="text-xs font-medium text-gray-700">H5 配置</span>
+          </a>
+          <a href="#" class="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-pink-300 hover:bg-pink-50 transition group">
+            <div class="w-10 h-10 bg-pink-50 rounded-xl flex items-center justify-center group-hover:bg-white transition">
+              <i class="fa-solid fa-clapperboard text-pink-500"></i>
+            </div>
+            <span class="text-xs font-medium text-gray-700">短剧后台</span>
+          </a>
+          <a href="#" class="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-white transition">
+              <i class="fa-solid fa-gear text-gray-500"></i>
+            </div>
+            <span class="text-xs font-medium text-gray-700">系统设置</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
