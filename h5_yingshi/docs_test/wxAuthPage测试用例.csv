@@ -1,0 +1,22 @@
+编号,模块,场景,前置条件,步骤,预期结果
+TC-01,引导页,首次进入展示引导页,wxh5平台 / wxAuthPage 页面 URL 不含任何授权参数,访问 wxAuthPage（无参数）,展示品牌logo + 授权文案 + 绿色授权按钮 + 跳小程序链接；不出现 loading 和兜底按钮
+TC-02,引导页,只有 union_id 时展示引导页,wxAuthPage 页面 URL 带 union_id=xxx 但缺少 user_id / token / open_id,访问 wxAuthPage?union_id=xxx,展示引导页；不触发 wxH5OpenidLogin 和 wxh5AdCallback；不出现 loading
+TC-03,引导页,点击授权按钮触发跳转,TC-01 或 TC-02 状态,点击「微信授权登录」按钮,跳转波塞冬授权地址；u 参数包含当前页面地址（含 union_id 若有）；最终进入微信授权确认页
+TC-04,授权回调自动处理,进入时展示 loading,wxAuthPage 页面 URL 带完整四参数：union_id / user_id / token / open_id,访问 wxAuthPage?union_id=x&user_id=x&token=x&open_id=x,立即展示「正在登录中...」；不展示引导页；不展示兜底按钮
+TC-05,授权回调自动处理,两个接口均成功后跳转阅读页,"wxAuthPage 页面 URL 带完整四参数 / wxH5OpenidLogin 返回成功 / wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=true 且 data.data 非空",访问带四参数的 wxAuthPage 并等待处理完成,loading 后自动跳转阅读页；跳转 URL 含 mid / eid 等广告参数；跳转方式为 location.replace；用户登录态写入成功
+TC-06,授权回调自动处理,完成后 wxAuthPage 页面 URL 敏感参数清理,同 TC-05,完成 TC-05 后检查地址栏,地址栏不含 user_id / token / open_id / union_id / code；mid / eid / si 等业务参数正常保留
+TC-07,授权回调自动处理,wxh5AdCallback 失败展示兜底,"wxAuthPage 页面 URL 带完整四参数 / wxH5OpenidLogin 返回成功 / wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=false 或 data.data 为空或网络异常",访问带四参数的 wxAuthPage 并等待处理完成,loading 消失后展示兜底文案和绿色按钮；不跳转阅读页
+TC-08,授权回调自动处理,wxH5OpenidLogin 失败后流程不中断,"wxAuthPage 页面 URL 带完整四参数 / wxH5OpenidLogin 返回失败 / wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=true 且 data.data 非空",访问带四参数的 wxAuthPage 并等待处理完成,wxH5OpenidLogin 失败后继续请求 wxh5AdCallback；wxh5AdCallback 成功则正常跳转阅读页；上报 login_err 埋点（parm4=false）
+TC-09,兜底跳转,兜底按钮跳转小程序,TC-07 状态（展示兜底按钮）,点击「前往小程序阅读」,触发 weixin://dl/business/ 协议；携带正确 appid；path=pages/homePage/homePage
+TC-10,兜底跳转,引导页跳小程序链接,TC-01 引导页状态,点击「登录遇到问题？点此前往小程序阅读」,同 TC-09
+TC-11,参数校验,广告参数白名单过滤,"wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=true 且 data.data 同时含白名单内参数（si / promotion_ad_id 等）和白名单外参数（foo / bar）",完成授权回调自动处理流程后检查跳转 URL,跳转 URL 只保留白名单参数；foo / bar 等被过滤掉
+TC-12,参数校验,wxh5AdCallback 请求参数验证,同 TC-05,完成授权回调自动处理流程并抓包 v1/report/wxh5adcallbackquery 请求,receiver=jlgg_wx；cl 中 _h5_ 已替换为 _miniapp_；union_id 必传且值非空
+TC-13,完整链路,公众号完整链路（union_id 透传）,公众号菜单配置了带 union_id 的 wxAuthPage 链接 / 测试账号已关注公众号,1.点击公众号菜单 2.引导页点击授权 3.微信弹窗同意 4.等待四跳回调 5.等待处理完成,步骤1展示引导页；步骤3授权弹窗正常；步骤4展示loading；步骤5跳转阅读页且 union_id 从地址栏消失且用户已登录
+TC-14,回归,其他平台不受影响,tth5 / ksh5 平台,分别走各平台正常登录流程,各平台登录流程正常；无异常跳转或参数丢失
+TC-15,fudid,接口必须返回 fudid 字段,"wxh5AdCallback（v1/report/wxh5adcallbackquery）接口正常调用",抓包 v1/report/wxh5adcallbackquery 响应体,data.data 解析后包含 fudid 字段且值非空
+TC-16,fudid,接口返回字段完整性验证,"wxh5AdCallback（v1/report/wxh5adcallbackquery）接口正常调用",抓包 v1/report/wxh5adcallbackquery 响应体并解析 data.data URL 参数,"data.data 解析后包含以下字段：mid / eid / coopCode / microapp_id / popularizeId / si / clickid / callback / promotion_ad_id / promotion_thirdad_id / promotion_code / promotion_pt / fudid"
+TC-17,fudid,fudid 在 wxh5AdCallback 返回成功后写入,"wxAuthPage 页面 URL 带完整四参数 / wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=true 且 data.data 含 fudid",完成授权回调自动处理流程后检查 AppStorage（在跳转阅读页之前拦截）,白名单过滤完成后、location.replace 执行前 fudid 已写入 commonStorage
+TC-18,fudid,fudid 写入值正确,"wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=true 且 data.data 含 fudid=test_fudid_123",完成授权回调自动处理流程后读取 AppStorage.commonStorage.getAny('fudid'),返回值为 test_fudid_123
+TC-19,fudid,fudid 不透传到跳转 URL,"wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=true 且 data.data 含 fudid",完成授权回调自动处理流程后检查跳转阅读页的 URL,跳转 URL 中不含 fudid 参数；fudid 只存在于 AppStorage 中
+TC-20,fudid,wxh5AdCallback 失败时不写入 fudid,"wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 success=false 或 data.data 为空",完成授权回调自动处理流程后检查 AppStorage,AppStorage 中不写入 fudid；展示兜底按钮
+TC-21,参数校验,union_id 为空时 wxh5AdCallback 返回 retcode=3 展示兜底,"wxAuthPage 页面 URL 带完整四参数但 union_id 为空 / wxH5OpenidLogin 正常 / wxh5AdCallback（v1/report/wxh5adcallbackquery）返回 HTTP 200 但 retcode=3（form filter fail）",访问 wxAuthPage?union_id=&user_id=x&token=x&open_id=x 并等待处理完成,wxh5AdCallback 返回 success=false；展示兜底文案和绿色按钮；不跳转阅读页
